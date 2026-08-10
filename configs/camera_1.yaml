@@ -1,11 +1,9 @@
 camera:
 
-  type: opencv
-
-  source: 0
+  type: picamera3
 
   width: 1280
 
   height: 720
 
-  
+  fps: 30
