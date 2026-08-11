@@ -11,4 +11,4 @@ class Frame:
 
     frame_id: int
     
-    
+#TODO terminar de implementar esta parte de acá    
