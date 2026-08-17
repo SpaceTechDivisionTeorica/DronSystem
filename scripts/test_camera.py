@@ -1,32 +1,66 @@
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-from src.camera.opencv_camera import OpenCVCamera
+import cv2
+
+from src.camera import CameraFactory
 
 
 def main():
 
-    camera = OpenCVCamera(
-        source=0
+    camera = CameraFactory.from_yaml(
+        "configs/camera.yaml"
     )
 
-    camera.open()
+    try:
 
-    if not camera.is_open():
-        print("No se pudo abrir la cámara.")
-        return
+        camera.open()
 
-    frame = camera.read()
+        print(
+            "Cámara abierta:",
+            camera.is_open()
+        )
 
-    if frame is None:
-        print("No se pudo obtener un frame.")
-        return
+        while True:
 
-    print("Frame capturado")
-    print("Shape:", frame.shape)
-    print("Type:", frame.dtype)
+            frame = camera.read()
 
-    camera.close()
+            if frame is None:
+                print(
+                    "No hay más frames"
+                )
+                break
+
+            print(
+                f"\rFrame: {frame.frame_id} | "
+                f"{frame.width}x{frame.height}",
+                end=""
+            )
+
+            image = frame.image
+
+            if frame.color_space == "RGB":
+                image = cv2.cvtColor(
+                    image,
+                    cv2.COLOR_RGB2BGR
+                )
+
+            cv2.imshow(
+                "Camera Test",
+                image
+            )
+
+            key = cv2.waitKey(1)
+
+            if key == 27:
+                break
+
+    finally:
+
+        camera.close()
+
+        cv2.destroyAllWindows()
+
+        print(
+            "\nCámara cerrada"
+        )
 
 
 if __name__ == "__main__":

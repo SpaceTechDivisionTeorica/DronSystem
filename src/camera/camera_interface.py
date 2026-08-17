@@ -1,24 +1,30 @@
 from abc import ABC, abstractmethod
 
+from .frame import Frame
+
+
+
 class CameraInterface(ABC):
-    
+
     @abstractmethod
-    def open(self):
-        """Inicialización de la cámara"""
+    def open(self) -> None:
         pass
 
     @abstractmethod
-    def read(self):
-        """Devuelve el siguiente Frame"""
+    def read(self) -> Frame | None:
         pass
 
     @abstractmethod
-    def is_open(self):
-        """Indica si la cámara está disponible"""
+    def is_open(self) -> bool:
         pass
 
     @abstractmethod
-    def close(self):
-        """Libera los recursos de la cámara"""
+    def close(self) -> None:
         pass
-    
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
